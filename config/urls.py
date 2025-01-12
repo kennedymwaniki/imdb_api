@@ -16,8 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-
+from watchlist.api.views import students, student_details
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('movie/', include('watchlist.api.urls'))
+    path('movie/', include('watchlist.api.urls')),
+    path('students/', students, name='students'),
+    path('students/<int:pk>/', student_details, name='student-details')
 ]
