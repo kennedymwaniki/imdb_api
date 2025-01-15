@@ -1,10 +1,19 @@
 from rest_framework import serializers
-from watchlist.models import Student, WatchList, StreamPlatform
+from watchlist.models import Student, WatchList, StreamPlatform, Review
 
 # model based serializer
 
 
+class ReviewsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Review
+        fields = "__all__"
+
+
 class WatchListSerializer(serializers.ModelSerializer):
+    # readonly ensures we can only read reviews and not add them from this serializer
+    reviews = ReviewsSerializer(many=True, read_only=True)
 
     class Meta:
         model = WatchList

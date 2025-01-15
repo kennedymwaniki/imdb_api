@@ -1,15 +1,54 @@
 from django.shortcuts import render
-from watchlist.models import WatchList, Student, StreamPlatform
+from watchlist.models import WatchList, Student, StreamPlatform, Review
 from rest_framework.response import Response
 # from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework import status
-from watchlist.api.serializers import WatchListSerializer, StudentSerializer, StreamPlatformSerializer
+from watchlist.api.serializers import WatchListSerializer, StudentSerializer, StreamPlatformSerializer, ReviewsSerializer
+from rest_framework import mixins
+from rest_framework import generics
 # Create your views here.
+
+
+class ReviewList(generics.ListCreateAPIView):
+    serializer_class = ReviewsSerializer
+
+    def get_queryset(self):
+        pk = self.kwargs['pk']
+        return Review.objects.filter(pk=pk)
+
+
+class ReviewDetails(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewsSerializer
+
+
+# working with generic views with mixins
+# class ReviewList(mixins.ListModelMixin,
+#                  mixins.CreateModelMixin,
+#                  generics.GenericAPIView):
+#     queryset = Review.objects.all()
+#     serializer_class = ReviewsSerializer
+
+#     def get(self, request, *args, **kwargs):
+#         return self.list(request, *args, **kwargs)
+
+#     def post(self, request, *args, **kwargs):
+#         return self.create(request, *args, **kwargs)
+
+
+# class ReviewDetails(mixins.RetrieveModelMixin, generics.GenericAPIView):
+#     queryset = Review.objects.all()
+#     serializer_class = ReviewsSerializer
+
+#     def get(self, request, *args, **kwargs):
+#         return self.retrieve(request, *args, **kwargs)
 
 
 # working with class based views'
 # APIVIEW
+
+
 class MovieListAV(APIView):
     def get(request, self):
         movie = WatchList.objects.all()
@@ -91,7 +130,6 @@ class StreamPlatformDetailsAV(APIView):
 
 
 # student views
-
 class StudentsAv(APIView):
     def get(self, request):
         students = Student.objects.all()
