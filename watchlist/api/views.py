@@ -111,7 +111,6 @@ class StudentDetailsAv(APIView):
     def get(self, request, pk):
         try:
             student = Student.objects.get(pk=pk)
-            re
         except Student.DoesNotExist:
             return Response({'error': 'student not found'}, status=status.HTTP_404_NOT_FOUND)
 
