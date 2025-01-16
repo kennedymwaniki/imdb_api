@@ -1,14 +1,14 @@
 from rest_framework import serializers
 from watchlist.models import Student, WatchList, StreamPlatform, Review
 
+
 # model based serializer
-
-
 class ReviewsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = "__all__"
+        exclude = ('watchlist',)
+        # fields = "__all__"
 
 
 class WatchListSerializer(serializers.ModelSerializer):
@@ -57,18 +57,10 @@ class StreamPlatformSerializer(serializers.ModelSerializer):
 #             return data
 
 
-class StudentSerializer(serializers.Serializer):
-    id = serializers.IntegerField(read_only=True)
-    name = serializers.CharField()
-    age = serializers.IntegerField()
-    subject = serializers.CharField()
+class StudentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Student
+        fields = "__all__"
 
-    def create(self, validated_data):
-        return Student.objects.create(**validated_data)
 
-    def update(self, instance, validated_data):
-        instance.name = validated_data.get('name', instance.name)
-        instance.age = validated_data.get('age', instance.age)
-        instance.subject = validated_data.get('subject', instance.subject)
-        instance.save()
-        return instance
+# using viewsets and routers for students model

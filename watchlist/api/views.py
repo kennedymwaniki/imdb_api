@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from watchlist.models import WatchList, Student, StreamPlatform, Review
 from rest_framework.response import Response
 # from rest_framework.decorators import api_view
@@ -7,6 +7,7 @@ from rest_framework import status
 from watchlist.api.serializers import WatchListSerializer, StudentSerializer, StreamPlatformSerializer, ReviewsSerializer
 from rest_framework import mixins
 from rest_framework import generics
+from rest_framework import viewsets
 # Create your views here.
 
 
@@ -21,6 +22,15 @@ class ReviewList(generics.ListCreateAPIView):
 class ReviewDetails(generics.RetrieveUpdateDestroyAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewsSerializer
+
+
+class ReviewCreate(generics.CreateAPIView):
+    serializer_class = ReviewsSerializer
+
+    def perform_create(self, serializer):
+        pk = self.kwargs['pk']
+        stream = StreamPlatform.objects.get(pk=pk)
+        serializer.save(platform=stream)
 
 
 # working with generic views with mixins
@@ -168,6 +178,23 @@ class StudentDetailsAv(APIView):
         student = Student.objects.get(pk=pk)
         student.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+# working with viewsets and routers
+class StudentViewSet(viewsets.ModelViewSet):
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializer
+
+    def list(self, request):
+        students = Student.objects.all()
+        serializer = StudentSerializer(students, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        queryset = Student.objects.all()
+        student = get_object_or_404(queryset, pk=pk)
+        serializer = StudentSerializer(student)
+        return Response(serializer.data)
 
     # working with class based views
 
