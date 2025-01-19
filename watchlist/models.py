@@ -14,6 +14,8 @@ class StreamPlatform(models.Model):
 
 # this is a movie db model
 
+# watchlist/Movie is a table that has a foreign key to the StreamPlatform table
+
 
 class WatchList(models.Model):
     title = models.CharField(max_length=100)

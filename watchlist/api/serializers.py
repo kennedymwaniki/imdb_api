@@ -11,6 +11,10 @@ class ReviewsSerializer(serializers.ModelSerializer):
         exclude = ('watchlist',)
         # fields = "__all__"
 
+    def create(self, validated_data):
+
+        return Review.objects.create(**validated_data)
+
 
 class WatchListSerializer(serializers.ModelSerializer):
     # readonly ensures we can only read reviews and not add them from this serializer

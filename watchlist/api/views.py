@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404, render
 from watchlist.models import WatchList, Student, StreamPlatform, Review
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
 # from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework import status
@@ -18,6 +19,18 @@ class ReviewList(generics.ListCreateAPIView):
         pk = self.kwargs['pk']
         return Review.objects.filter(pk=pk)
 
+    def perform_create(self, serializer):
+        pk = self.kwargs['pk']
+        watchlist = WatchList.objects.get(pk=pk)
+        user = self.request.user
+
+        # Check if review exists
+        review_queryset = Review.objects.filter(watchlist=watchlist, user=user)
+        if review_queryset.exists():
+            raise ValidationError("You have already reviewed this movie!")
+
+        serializer.save(watchlist=watchlist, user=user)
+
 
 class ReviewDetails(generics.RetrieveUpdateDestroyAPIView):
     queryset = Review.objects.all()
@@ -27,10 +40,30 @@ class ReviewDetails(generics.RetrieveUpdateDestroyAPIView):
 class ReviewCreate(generics.CreateAPIView):
     serializer_class = ReviewsSerializer
 
+    def get_queryset(self):
+        pk = self.kwargs['pk']
+        return Review.objects.filter(pk=pk)
+
     def perform_create(self, serializer):
         pk = self.kwargs['pk']
-        stream = StreamPlatform.objects.get(pk=pk)
-        serializer.save(platform=stream)
+        movie = WatchList.objects.get(pk=pk)
+
+        user = self.request.user
+        review_queryset = Review.objects.filter(
+            watchlist=movie, user=user)
+
+        if review_queryset.exists():
+            raise ValidationError('You have already reviewed this movie')
+
+        serializer.save(watchlist=movie, user=user)
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context.update({
+            "watchlist": WatchList.objects.get(pk=self.kwargs['pk']),
+            "user": self.request.user
+        })
+        return context
 
 
 # working with generic views with mixins
