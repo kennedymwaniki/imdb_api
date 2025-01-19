@@ -4,6 +4,7 @@ from watchlist.models import Student, WatchList, StreamPlatform, Review
 
 # model based serializer
 class ReviewsSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField(read_only=True)
 
     class Meta:
         model = Review
