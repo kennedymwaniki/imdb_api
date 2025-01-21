@@ -4,11 +4,13 @@ from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 # from rest_framework.decorators import api_view
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from watchlist.api.serializers import WatchListSerializer, StudentSerializer, StreamPlatformSerializer, ReviewsSerializer
 from rest_framework import mixins
 from rest_framework import generics
 from rest_framework import viewsets
+from watchlist.api.permissions import AdminOrReadOnly, ReviewUserOrReadOnly
 # Create your views here.
 
 
@@ -33,6 +35,7 @@ class ReviewList(generics.ListCreateAPIView):
 
 
 class ReviewDetails(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [ReviewUserOrReadOnly]
     queryset = Review.objects.all()
     serializer_class = ReviewsSerializer
 
@@ -215,6 +218,7 @@ class StudentDetailsAv(APIView):
 
 # working with viewsets and routers
 class StudentViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
 
