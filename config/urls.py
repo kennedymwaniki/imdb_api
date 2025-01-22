@@ -16,5 +16,5 @@ urlpatterns = [
     # path('students/<int:pk>/', StudentDetailsAv.as_view(), name='student-details'),
     path('', lambda request: redirect('students-list', permanent=False)),
     path("", include(router.urls)),
-    path('api-auth/', include('rest_framework.urls')),
+    # path('api-auth/', include('rest_framework.urls')),
 ]
