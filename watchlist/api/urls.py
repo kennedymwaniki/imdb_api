@@ -5,13 +5,14 @@ from watchlist.api.views import MovieListAV, MovieDetailsAV, ReviewCreate, Strea
 router = DefaultRouter()
 
 urlpatterns = [
-    path('list/', MovieListAV.as_view(), name='movie-list'),
+    path('', MovieListAV.as_view(), name='movie-list'),
     path('<int:pk>/', MovieDetailsAV.as_view(), name='movie-details'),
     path('stream/', StreamPlatformAV.as_view(), name='stream'),
-    path('stream/<int:pk>', StreamPlatformDetailsAV.as_view(), name='stream_details'),
-    path('stream/<int:pk>/review', ReviewList.as_view(), name="reviews-list"),
-    # path('stream/<int:pk>/review-create', ReviewCreate.as_view(), name="reviews-create"),
-    path('stream/review/<int:pk>/', ReviewDetails.as_view(), name="review")
+    path('stream/<int:pk>/', StreamPlatformDetailsAV.as_view(),
+         name='stream_details'),
+    path('<int:pk>/review', ReviewList.as_view(), name="review-list"),
+    path('<int:pk>/review-create', ReviewCreate.as_view(), name="reviews-create"),
+    path('review/<int:pk>/', ReviewDetails.as_view(), name="review")
 
 ]
 
