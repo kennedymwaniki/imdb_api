@@ -19,8 +19,10 @@ class ReviewList(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        pk = self.kwargs['pk']
-        return Review.objects.filter(pk=pk)
+        pk = self.kwargs.get('pk')
+        if pk:
+            return Review.objects.filter(watchlist__pk=pk)
+        return Review.objects.all()
 
     def perform_create(self, serializer):
         pk = self.kwargs['pk']
@@ -230,7 +232,7 @@ class StudentDetailsAv(APIView):
 
 # working with viewsets and routers
 class StudentViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
 
@@ -240,6 +242,8 @@ class StudentViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
+        user = self.request.user
+        print(f"Authenticated user: {user}")
         queryset = Student.objects.all()
         student = get_object_or_404(queryset, pk=pk)
         serializer = StudentSerializer(student)
