@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, render
 from watchlist.models import WatchList, Student, StreamPlatform, Review
 from rest_framework.response import Response
-from rest_framework.throttling import UserRateThrottle
+from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 # from rest_framework.decorators import api_view
@@ -12,12 +12,15 @@ from rest_framework import mixins
 from rest_framework import generics
 from rest_framework import viewsets
 from watchlist.api.permissions import AdminOrReadOnly, ReviewUserOrReadOnly
+from watchlist.api.throttling import ReviewCreateThrottle, ReviewListThrottle
+
 # Create your views here.
 
 
 class ReviewList(generics.ListCreateAPIView):
     serializer_class = ReviewsSerializer
     permission_classes = [IsAuthenticated]
+    throttle_classes = [ReviewCreateThrottle, AnonRateThrottle]
 
     def get_queryset(self):
         pk = self.kwargs.get('pk')
@@ -57,6 +60,7 @@ class ReviewDetails(generics.RetrieveUpdateDestroyAPIView):
 class ReviewCreate(generics.CreateAPIView):
     serializer_class = ReviewsSerializer
     permission_classes = [IsAuthenticated]
+    throttle_classes = [ReviewCreateThrottle]
 
     def get_queryset(self):
         pk = self.kwargs['pk']
@@ -241,7 +245,7 @@ class StudentDetailsAv(APIView):
 
 # working with viewsets and routers
 class StudentViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     throttle_classes = [UserRateThrottle]
 
     queryset = Student.objects.all()
