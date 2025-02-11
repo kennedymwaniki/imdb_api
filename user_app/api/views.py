@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view
 from user_app.api.serializers import RegistrationSerializer
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.authtoken.models import Token
+# from rest_framework.authtoken.models import Token
 from user_app import models
 
 
@@ -17,8 +17,8 @@ def registration(request):
             data['response'] = "Registration was Successful"
             data['username'] = account.username
             data['email'] = account.email
-            token = Token.objects.get(user=account).key
-            data['token'] = token
+            # token = Token.objects.get(user=account).key
+            # data['token'] = token
             return Response(data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

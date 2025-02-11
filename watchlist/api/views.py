@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404, render
 from watchlist.models import WatchList, Student, StreamPlatform, Review
 from rest_framework.response import Response
+from rest_framework.throttling import UserRateThrottle
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 # from rest_framework.decorators import api_view
@@ -110,6 +111,8 @@ class ReviewCreate(generics.CreateAPIView):
 
 
 class MovieListAV(APIView):
+    permission_classes = [AdminOrReadOnly]
+
     def get(request, self):
         movie = WatchList.objects.all()
         serializer = WatchListSerializer(movie, many=True)
@@ -125,6 +128,8 @@ class MovieListAV(APIView):
 
 
 class MovieDetailsAV(APIView):
+    permission_classes = [AdminOrReadOnly]
+
     def get(self, request, pk):
         try:
             movie = WatchList.objects.get(pk=pk)
@@ -152,6 +157,8 @@ class MovieDetailsAV(APIView):
 
 
 class StreamPlatformAV(APIView):
+    permission_classes = [AdminOrReadOnly]
+
     def get(self, request):
         streams = StreamPlatform.objects.all()
         serializer = StreamPlatformSerializer(streams, many=True)
@@ -167,6 +174,8 @@ class StreamPlatformAV(APIView):
 
 
 class StreamPlatformDetailsAV(APIView):
+    permission_classes = [AdminOrReadOnly]
+
     def get(self, request, pk):
         try:
             stream = StreamPlatform.objects.get(pk=pk)
@@ -233,6 +242,8 @@ class StudentDetailsAv(APIView):
 # working with viewsets and routers
 class StudentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
+    throttle_classes = [UserRateThrottle]
+
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
 

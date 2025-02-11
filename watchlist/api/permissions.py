@@ -24,4 +24,4 @@ class ReviewUserOrReadOnly(permissions.BasePermission):
             # check if the request is a safe method
             return True
         else:
-            return obj.user == request.user
+            return obj.user == request.user or request.user.is_admin

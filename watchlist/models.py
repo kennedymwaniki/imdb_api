@@ -45,7 +45,7 @@ class Review(models.Model):
         WatchList, on_delete=models.CASCADE, related_name='reviews')
 
     def __str__(self):
-        return str(self.rating) + "-" + self.watchlist.title
+        return str(self.rating) + "-" + self.watchlist.title + "-" + str(self.user)
 
 
 class Student(models.Model):
